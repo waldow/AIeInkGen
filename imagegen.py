@@ -5,6 +5,7 @@ import re
 import replicate
 from PIL import Image
 import os
+import base64
 
 
 def make_filename_friendly(input_string):
@@ -42,10 +43,26 @@ def resize_png(input_path, output_path, new_width, new_height):
         img_resized.save(output_path)
         print(f"Image resized to custom size: {new_width}x{new_height}")
 
+def save_base64_as_png(data_url, file_name="output.png"):
+    # Check if the string starts with the correct data URL prefix
+    if data_url.startswith("data:image/png;base64,"):
+        # Remove the prefix from the base64 string
+        base64_data = data_url.replace("data:image/png;base64,", "")
+        
+        # Decode the base64 string
+        image_data = base64.b64decode(base64_data)
+        
+        # Write the binary data to a .png file
+        with open(file_name, "wb") as png_file:
+            png_file.write(image_data)
+        print(f"PNG file saved as {file_name}")
+    else:
+        print("The provided string does not contain a base64-encoded PNG image.")
+
 
 # Example usage
-block_of_text_user ="Baseball"
-input_width, input_height = 264, 176
+block_of_text_user ="Apple tree"
+input_width, input_height = 800, 480
 
 
 new_width, new_height = resize_resolution(input_width, input_height)
@@ -97,21 +114,26 @@ output = replicate.run(
         "aspect_ratio": "custom",
         "output_format": "png",
         "output_quality": 80,
-        "safety_tolerance": 1,
+        "safety_tolerance": 5,
         "prompt_upsampling": True
-    }
+    },
+     timeout=120
 )
 print(output.url)
 
-# Download and save the image if the output is a URL
-if isinstance(output.url, str) and output.url.startswith('http'):
-    response = requests.get(output)
-    if response.status_code == 200:
-        with open(filename_raw, 'wb') as file:
-            file.write(response.content)
-        print(f"Image saved as {filename_raw}")
-    else:
-        print("Failed to download the image")
+if isinstance(output.url, str) and output.url.startswith('data:image/png;base64'):
+    save_base64_as_png(output.url, filename_raw)
+else:
+
+    # Download and save the image if the output is a URL
+    if isinstance(output.url, str) and output.url.startswith('http'):
+        response = requests.get(output)
+        if response.status_code == 200:
+            with open(filename_raw, 'wb') as file:
+                file.write(response.content)
+            print(f"Image saved as {filename_raw}")
+        else:
+            print("Failed to download the image")
 
 resize_png(filename_raw, filename_final, input_width, input_height)
 
