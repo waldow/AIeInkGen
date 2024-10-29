@@ -2,6 +2,8 @@
 
 This Python script generates images based on user-provided text prompts. It leverages OpenAI's GPT model to create detailed image descriptions and uses Replicate's image generation models to produce the final images.
 
+Designed specifically for e-ink displays, this script focuses on producing high-contrast images with limited colors to suit the monochromatic or restricted palette of e-ink technology. Additionally, the script supports custom resolutions, allowing users to specify exact dimensions, making it ideal for a wide range of e-ink display sizes and uses.
+
 ## Table of Contents
 - [Features](#features)
 - [Prerequisites](#prerequisites)
