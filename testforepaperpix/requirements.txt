@@ -1,0 +1,15 @@
+# Python dependencies for test_send_ai_data.py
+# Azure Service Bus SDK for sending messages
+azure-servicebus==7.11.4
+
+# Environment variable management
+python-dotenv==1.0.0
+
+# OpenAI API for image text generation
+openai==1.35.0
+
+# HTTP requests for weather API
+requests==2.31.0
+
+# Optional: For enhanced logging
+colorlog==6.8.0
